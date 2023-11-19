@@ -28,7 +28,7 @@ setup(
     install_requires=[
         'flake8',
     ],
-    url='http://github.com/zheller/flake8-quotes/',
+    url='https://github.com/brodybits/flake8-x-quotes',
     long_description=LONG_DESCRIPTION,
     description='Flake8 lint for quotes.',
     packages=['flake8_quotes'],

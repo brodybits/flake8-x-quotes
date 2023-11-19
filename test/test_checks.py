@@ -270,6 +270,5 @@ class FStringDefaultDoubleQuotesConfigTestChecks(TestCase):
         ])
 
 
-
 def get_absolute_path(filepath):
     return os.path.join(os.path.dirname(__file__), filepath)
