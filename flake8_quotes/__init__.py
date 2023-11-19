@@ -1,6 +1,5 @@
 import optparse
 import tokenize
-import warnings
 
 # Polyfill stdin loading/reading lines
 # https://gitlab.com/pycqa/flake8-polyfill/blob/1.0.1/src/flake8_polyfill/stdin.py#L52-57
@@ -79,6 +78,25 @@ class QuoteChecker(object):
     DOCSTRING_QUOTES["'''"] = DOCSTRING_QUOTES["'"]
     DOCSTRING_QUOTES['"""'] = DOCSTRING_QUOTES['"']
 
+    # flake8-x-quotes:
+    CONFIG_F_STRING_QUOTES = {
+        # When user wants only single quotes
+        "'": {
+            'good_f_string_quote': "'",
+            'bad_f_string_quote': '"',
+            'f_string_quote_error_message': 'f-string double quotes found but single quotes preferred',
+        },
+        # When user wants only double quotes
+        '"': {
+            'good_f_string_quote': '"',
+            'bad_f_string_quote': "'",
+            'f_string_quote_error_message': 'f-string single quotes found but double quotes preferred',
+        },
+    }
+    # ---
+    CONFIG_F_STRING_QUOTES['single'] = CONFIG_F_STRING_QUOTES["'"]
+    CONFIG_F_STRING_QUOTES['double'] = CONFIG_F_STRING_QUOTES['"']
+
     def __init__(self, tree, lines=None, filename='(none)'):
         self.filename = filename
         self.lines = lines
@@ -128,6 +146,12 @@ class QuoteChecker(object):
         cls._register_opt(parser, '--no-avoid-escape', dest='avoid_escape', default=None, action='store_false',
                           parse_from_config=False,
                           help='Disable avoiding escaping same quotes in inline strings')
+        # ---
+        # flake8-x-quotes:
+        cls._register_opt(parser, '--f-string-quotes', default=None,
+                          action='store', parse_from_config=True,
+                          choices=sorted(cls.CONFIG_F_STRING_QUOTES.keys()),
+                          help='f-string-quotes to expect in all files (default: ")')
 
     @classmethod
     def parse_options(cls, options):
@@ -137,18 +161,14 @@ class QuoteChecker(object):
         cls.config.update(cls.INLINE_QUOTES["'"])
         cls.config.update(cls.MULTILINE_QUOTES['"""'])
         cls.config.update(cls.DOCSTRING_QUOTES['"""'])
+        # ---
+        # flake8-x-quotes:
+        cls.config.update(cls.CONFIG_F_STRING_QUOTES['"'])
 
-        # If `options.quotes` was specified, then use it
-        if hasattr(options, 'quotes') and options.quotes is not None:
-            # https://docs.python.org/2/library/warnings.html#warnings.warn
-            warnings.warn('flake8-quotes has deprecated `quotes` in favor of `inline-quotes`. '
-                          'Please update your configuration')
-            cls.config.update(cls.INLINE_QUOTES[options.quotes])
-        # Otherwise, use the supported `inline_quotes`
-        else:
-            # cls.config = {good_single: ', good_multiline: """, bad_single: ", bad_multiline: '''}
-            #   -> {good_single: ", good_multiline: """, bad_single: ', bad_multiline: '''}
-            cls.config.update(cls.INLINE_QUOTES[options.inline_quotes])
+        # flake8-x-quotes:
+        # deprecated quotes option removed from this fork of flake8-quotes
+        cls.config.update(cls.INLINE_QUOTES[options.inline_quotes])
+        # ---
 
         # If multiline quotes was specified, overload our config with those options
         if hasattr(options, 'multiline_quotes') and options.multiline_quotes is not None:
@@ -165,6 +185,11 @@ class QuoteChecker(object):
             cls.config.update({'avoid_escape': options.avoid_escape})
         else:
             cls.config.update({'avoid_escape': True})
+
+        # flake8-x-quotes:
+        # If f-string quotes was specified, overload our config with those options
+        if hasattr(options, 'f_string_quotes') and options.f_string_quotes is not None:
+            cls.config.update(cls.CONFIG_F_STRING_QUOTES[options.f_string_quotes])
 
     def get_file_contents(self):
         if self.filename in ('stdin', '-', None):
@@ -252,6 +277,15 @@ class QuoteChecker(object):
                     'line': start_row,
                     'col': start_col,
                 }
+            # flake8-x-quotes:
+            elif prefix == 'f':
+                string_contents = unprefixed_string[1:-1]
+                if not self.config['good_f_string_quote'] in unprefixed_string:
+                    yield {
+                        'message': 'Q099 ' + self.config['f_string_quote_error_message'],
+                        'line': start_row,
+                        'col': start_col,
+                    }
             # Otherwise (string is inline quote)
             else:
                 #   'This is a string'       -> Good

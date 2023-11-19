@@ -215,5 +215,61 @@ class MultilineTestChecks(TestCase):
         ])
 
 
+class FStringSingleQuotesAliasTestChecks(TestCase):
+    def setUp(self):
+        class FStringSingleQuotesAliasOptions():
+            inline_quotes = 'double'
+            f_string_quotes = 'single'
+        QuoteChecker.parse_options(FStringSingleQuotesAliasOptions)
+
+    def test_f_string_single_quotes_alias(self):
+        checker = QuoteChecker(None, filename=get_absolute_path('data/f_string_quotes.py'))
+        self.assertEqual(list(checker.get_quotes_errors(checker.get_file_contents())), [
+            {'col': 8, 'line': 1, 'message': 'Q099 f-string double quotes found but single quotes preferred'}
+        ])
+
+
+class FStringDoubleQuotesAliasTestChecks(TestCase):
+    def setUp(self):
+        class FStringDoubleQuotesAliasOptions():
+            inline_quotes = 'single'
+            f_string_quotes = 'double'
+        QuoteChecker.parse_options(FStringDoubleQuotesAliasOptions)
+
+    def test_f_string_double_quotes_alias(self):
+        checker = QuoteChecker(None, filename=get_absolute_path('data/f_string_quotes.py'))
+        self.assertEqual(list(checker.get_quotes_errors(checker.get_file_contents())), [
+            {'col': 8, 'line': 2, 'message': 'Q099 f-string single quotes found but double quotes preferred'}
+        ])
+
+
+class FStringSingleQuotesConfigTestChecks(TestCase):
+    def setUp(self):
+        class FStringSingleQuotesConfigOptions():
+            inline_quotes = 'double'
+            f_string_quotes = "'"
+        QuoteChecker.parse_options(FStringSingleQuotesConfigOptions)
+
+    def test_f_string_single_quotes_config(self):
+        checker = QuoteChecker(None, filename=get_absolute_path('data/f_string_quotes.py'))
+        self.assertEqual(list(checker.get_quotes_errors(checker.get_file_contents())), [
+            {'col': 8, 'line': 1, 'message': 'Q099 f-string double quotes found but single quotes preferred'}
+        ])
+
+
+class FStringDefaultDoubleQuotesConfigTestChecks(TestCase):
+    def setUp(self):
+        class FStringDefaultDoubleQuotesConfigOptions():
+            inline_quotes = 'single'
+        QuoteChecker.parse_options(FStringDefaultDoubleQuotesConfigOptions)
+
+    def test_f_default_string_double_quotes_config(self):
+        checker = QuoteChecker(None, filename=get_absolute_path('data/f_string_quotes.py'))
+        self.assertEqual(list(checker.get_quotes_errors(checker.get_file_contents())), [
+            {'col': 8, 'line': 2, 'message': 'Q099 f-string single quotes found but double quotes preferred'}
+        ])
+
+
+
 def get_absolute_path(filepath):
     return os.path.join(os.path.dirname(__file__), filepath)

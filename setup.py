@@ -23,9 +23,7 @@ with open(os.path.join(__dir__, 'flake8_quotes', '__about__.py')) as file:
 
 
 setup(
-    name='flake8-quotes',
-    author='Zachary Wright Heller',
-    author_email='zheller@gmail.com',
+    name='flake8-x-quotes',
     version=about['__version__'],
     install_requires=[
         'flake8',
@@ -45,7 +43,6 @@ setup(
     zip_safe=True,
     keywords='flake8 lint quotes',
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
         'Framework :: Flake8',
         'Intended Audience :: Developers',
@@ -53,10 +50,6 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',

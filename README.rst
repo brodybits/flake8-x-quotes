@@ -1,17 +1,17 @@
-Flake8 Extension to lint for quotes.
-===========================================
+flake8-x-quotes - fork of flake8-x-quotes with an update for f-strings
+======================================================================
 
-.. image:: https://travis-ci.org/zheller/flake8-quotes.svg?branch=master
-   :target: https://travis-ci.org/zheller/flake8-quotes
-   :alt: Build Status
+..
+   TODO: Implement GitHub CI & show badge here
 
-Major update in 2.0.0
----------------------
+Major update from flake8-quotes 2.0.0
+-------------------------------------
 We automatically encourage avoiding escaping quotes as per `PEP 8 <https://www.python.org/dev/peps/pep-0008/#string-quotes>`_. To disable this, use ``--no-avoid-escape`` (can be used in configuration file via ``avoid-escape``).
 
-Deprecation notice in 0.3.0
----------------------------
-To anticipate multiline support, we are renaming ``--quotes`` to ``--inline-quotes``. Please adjust your configurations appropriately.
+Deprecated option removed from this fork of flake8-quotes
+---------------------------------------------------------
+
+- ``--quotes`` - now renamed to ``--inline-quotes``.
 
 Usage
 -----
@@ -20,7 +20,7 @@ If you are using flake8 it's as easy as:
 
 .. code:: shell
 
-    pip install flake8-quotes
+    pip install flake8-x-quotes
 
 Now you don't need to worry about people like @sectioneight constantly
 complaining that you are using double-quotes and not single-quotes.
@@ -45,12 +45,13 @@ Q000 Remove bad quotes
 Q001 Remove bad quotes from multiline string
 Q002 Remove bad quotes from docstring
 Q003 Change outer quotes to avoid escaping inner quotes
+Q099 [flake8-x-quotes] Remove bad quotes from f-string - CODE IS SUBJECT TO CHANGE
 ==== =========================================================================
 
 Configuration
 -------------
 
-By default, we expect single quotes (') and look for unwanted double quotes ("). To expect double quotes (") and find unwanted single quotes ('), use the CLI option:
+By default, we expect single quotes (') and look for unwanted double quotes (") (other way around for f-string quotes, multiline quotes, and docstring quotes). To expect double quotes (") and find unwanted single quotes ('), use the CLI option:
 
 .. code:: shell
 
@@ -69,6 +70,9 @@ By default, we expect single quotes (') and look for unwanted double quotes (").
 
     # We also support disabling escaping quotes
     # flake8 --no-avoid-escape
+
+    # [flake8-x-quotes] configure for f-string vs normal string literal:
+    flake8 --inline-quotes 'double' --f-string-quotes 'single'
 
 or configuration option in `tox.ini`/`setup.cfg`.
 
@@ -90,6 +94,16 @@ or configuration option in `tox.ini`/`setup.cfg`.
     #
     # We also support disabling escaping quotes
     # avoid-escape = False
+    #
+    # [flake8-x-quotes] configure for f-string vs normal string literal:
+    # inline-quotes = double
+    # f-string-quotes = single
+
+Supported Python versions
+-------------------------
+
+- minimum Python version tested & supported with: 3.8
+- known issue with f-string starting with Python 3.12: <https://github.com/zheller/flake8-quotes/issues/117>
 
 Caveats
 -------

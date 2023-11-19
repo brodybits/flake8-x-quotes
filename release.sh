@@ -32,4 +32,4 @@ git push --tags
 
 # Publish the release to PyPI
 python setup.py sdist --formats=gztar
-twine upload "dist/flake8-quotes-$version.tar.gz"
+twine upload "dist/flake8-x-quotes-$version.tar.gz"
