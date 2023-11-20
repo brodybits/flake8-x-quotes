@@ -279,7 +279,6 @@ class QuoteChecker(object):
                 }
             # flake8-x-quotes:
             elif prefix == 'f':
-                string_contents = unprefixed_string[1:-1]
                 if not self.config['good_f_string_quote'] in unprefixed_string:
                     yield {
                         'message': 'Q099 ' + self.config['f_string_quote_error_message'],
